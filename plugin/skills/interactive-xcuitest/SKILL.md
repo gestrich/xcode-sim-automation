@@ -1,12 +1,12 @@
 ---
 name: interactive-xcuitest
-description: Interactively controls an app through XCUITest via a Python CLI. Claude reads UI state and screenshots, decides actions, and executes commands. Use for dynamic UI exploration, complex navigation flows, or when pre-scripted navigation isn't feasible.
+description: Interactively controls an app through XCUITest via a CLI. Claude reads UI state and screenshots, decides actions, and executes commands. Use for dynamic UI exploration, complex navigation flows, or when pre-scripted navigation isn't feasible.
 user-invocable: true
 ---
 
 # Interactive XCUITest Control
 
-Enables Claude to dynamically control an app through XCUITest using a Python CLI that abstracts the file-based protocol. Unlike pre-scripted tests, this allows Claude to explore the UI, make decisions based on current state, and recover from unexpected situations.
+Enables Claude to dynamically control an app through XCUITest using a CLI that abstracts the file-based protocol. Unlike pre-scripted tests, this allows Claude to explore the UI, make decisions based on current state, and recover from unexpected situations.
 
 ## Usage
 
@@ -36,17 +36,21 @@ If `.xcuitest-config.json` doesn't exist, ask the user for these values before p
 
 If `config.appSpecificNotes` is set, read that file from the project root for app-specific navigation patterns and accessibility identifiers.
 
-### Locating the Python CLI
+### Locating the CLI
 
-The Python CLI (`xcuitest-control.py`) is bundled with this plugin. To find it:
+The CLI wrapper script (`Tools/xcuitest-control`) is in the xcode-sim-automation repo. To find it:
 
-1. Search for the plugin's tools directory — it contains `xcuitest-control.py`
-2. Common locations: `~/Developer/personal/xcode-sim-automation/Tools/xcuitest-control.py` or the plugin cache at `~/.claude/plugins/cache/*/tools/xcuitest-control.py`
+1. Search for the repo's `Tools/xcuitest-control` wrapper script (not the `.py` file)
+2. Common locations: `~/Developer/personal/xcode-sim-automation/Tools/xcuitest-control`
 3. If not found, clone the repo: `git clone https://github.com/gestrich/xcode-sim-automation.git`
+
+The wrapper auto-builds the Swift CLI binary on first run and whenever source files change — no manual build step needed.
+
+A Python fallback (`Tools/xcuitest-control.py`) is also available if the Swift toolchain isn't installed.
 
 Set the CLI path variable:
 ```bash
-CLI=<path-to-xcuitest-control.py>
+CLI=<path-to-xcuitest-control>
 ```
 
 ## Prerequisites
@@ -85,7 +89,7 @@ final class InteractiveControlTests: XCTestCase {
 Set these variables at the top of every Bash command (shell state does not persist between Bash tool calls):
 
 ```bash
-CLI=<path-to-xcuitest-control.py>
+CLI=<path-to-xcuitest-control>
 CT="$CONTAINER"
 ```
 
@@ -97,7 +101,7 @@ Kill any app processes from previous runs (stale processes cause "Failed to term
 
 ```bash
 pkill -f "$PROCESS_NAME" 2>/dev/null; sleep 2
-python3 $CLI -c "$CT" reset
+$CLI -c "$CT" reset
 ```
 
 ### 3. Build and Start the XCUITest
@@ -132,7 +136,7 @@ The test will:
 Use the `ready` command to poll until the test is running:
 
 ```bash
-python3 $CLI -c "$CT" ready --timeout 30
+$CLI -c "$CT" ready --timeout 30
 ```
 
 ### 5. Activate the App
@@ -140,7 +144,7 @@ python3 $CLI -c "$CT" ready --timeout 30
 **CRITICAL**: Always activate the app first to bring it to the foreground. If the app window is behind other windows, scroll/tap commands will fail with "Unable to find hit point".
 
 ```bash
-python3 $CLI -c "$CT" activate
+$CLI -c "$CT" activate
 ```
 
 ### 6. Execute Commands
@@ -155,7 +159,7 @@ Use the CLI to execute actions:
 # Read $CT/xcuitest-screenshot.png
 
 # Execute action
-python3 $CLI -c "$CT" tap --target settingsButton --target-type button
+$CLI -c "$CT" tap --target settingsButton --target-type button
 
 # Read updated hierarchy and screenshot after action
 ```
@@ -167,10 +171,10 @@ See [cli-reference.md](cli-reference.md) for the full command reference.
 When the goal is achieved:
 
 ```bash
-python3 $CLI -c "$CT" done
+$CLI -c "$CT" done
 ```
 
-**Note**: The `done` command will report a timeout from the Python CLI — this is expected. The test exits before writing a "completed" status. Check the xcodebuild output for "TEST EXECUTE SUCCEEDED" to confirm clean shutdown.
+**Note**: The `done` command will report a timeout — this is expected. The test exits before writing a "completed" status. Check the xcodebuild output for "TEST EXECUTE SUCCEEDED" to confirm clean shutdown.
 
 After exit, kill any orphaned app processes:
 
@@ -185,11 +189,11 @@ On macOS, Xcode always sandboxes the XCUITest runner. The test runner **cannot**
 Use the `--container` (`-c`) flag on every CLI command to set all file paths from the container directory:
 
 ```bash
-python3 $CLI -c "$CT" screenshot
-python3 $CLI -c "$CT" tap --target myButton --target-type button
+$CLI -c "$CT" screenshot
+$CLI -c "$CT" tap --target myButton --target-type button
 ```
 
-**IMPORTANT**: Shell state does not persist between Bash tool calls. You must include `CLI=...` and `CT=...` in **every** Bash command that uses the Python CLI.
+**IMPORTANT**: Shell state does not persist between Bash tool calls. You must include `CLI=...` and `CT=...` in **every** Bash command that uses the CLI.
 
 ## Reading the UI Hierarchy
 
@@ -222,7 +226,7 @@ When interacting with text fields, the keyboard may appear and affect other UI e
 Tap on a non-interactive element that's visible:
 
 ```bash
-python3 $CLI tap --target notesLabel --target-type staticText
+$CLI tap --target notesLabel --target-type staticText
 ```
 
 **Tips for dismissing the keyboard:**
@@ -235,12 +239,12 @@ python3 $CLI tap --target notesLabel --target-type staticText
 
 1. **Tap the text field first** to focus it:
    ```bash
-   python3 $CLI tap --target searchBar --target-type any
+   $CLI tap --target searchBar --target-type any
    ```
 
 2. **Then type your text**:
    ```bash
-   python3 $CLI type --value "Hello"
+   $CLI type --value "Hello"
    ```
 
 ## Additional Reference
@@ -264,6 +268,6 @@ python3 $CLI tap --target notesLabel --target-type staticText
 11. **Retry with alternatives** — Use `--target-type any` if specific type fails
 12. **Build before test** — Always `build-for-testing` first to avoid hangs
 13. **Hierarchy is large (1500+ lines)** — Use Grep to search for specific identifiers rather than reading the entire file linearly
-14. **Re-set CLI/CT vars every command** — Shell state doesn't persist between Bash tool calls
+14. **Re-set CLI/CT vars every command** — Shell state doesn't persist between Bash tool calls. The first invocation per session triggers a build; subsequent calls are instant.
 15. **Scroll with a target** — When scrolling lists, use `--target <listIdentifier> --target-type any` rather than scrolling the app itself
 16. **Improve the shared package** — When you discover issues or missing features in xcode-sim-automation, edit the package directly and commit

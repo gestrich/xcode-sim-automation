@@ -1,22 +1,22 @@
 # CLI Commands Reference
 
-The `xcuitest-control.py` script provides a command-line interface for controlling XCUITest. Always use `--container` (`-c`) to set the sandbox paths.
+The `xcuitest-control` wrapper script provides a command-line interface for controlling XCUITest. It auto-builds the Swift CLI binary on first run and whenever source files change. Always use `--container` (`-c`) to set the sandbox paths.
 
 ## Quick Reference
 
 ```bash
-python3 $CLI -c "$CT" tap --target submitButton --target-type button
-python3 $CLI -c "$CT" scroll --direction down --target listView --target-type any
-python3 $CLI -c "$CT" type --value "Hello World"
-python3 $CLI -c "$CT" adjust --target volumeSlider --value 0.75
-python3 $CLI -c "$CT" pinch --scale 2.0 --target imageView
-python3 $CLI -c "$CT" wait --value 2.0
-python3 $CLI -c "$CT" screenshot
-python3 $CLI -c "$CT" status
-python3 $CLI -c "$CT" activate
-python3 $CLI -c "$CT" reset
-python3 $CLI -c "$CT" ready --timeout 30
-python3 $CLI -c "$CT" done
+$CLI -c "$CT" tap --target submitButton --target-type button
+$CLI -c "$CT" scroll --direction down --target listView --target-type any
+$CLI -c "$CT" type --value "Hello World"
+$CLI -c "$CT" adjust --target volumeSlider --value 0.75
+$CLI -c "$CT" pinch --scale 2.0 --target imageView
+$CLI -c "$CT" wait --value 2.0
+$CLI -c "$CT" screenshot
+$CLI -c "$CT" status
+$CLI -c "$CT" activate
+$CLI -c "$CT" reset
+$CLI -c "$CT" ready --timeout 30
+$CLI -c "$CT" done
 ```
 
 ## CLI Output
@@ -48,9 +48,9 @@ On error:
 Taps an element by identifier.
 
 ```bash
-python3 $CLI tap --target submitButton --target-type button
-python3 $CLI tap -t submitButton -T button
-python3 $CLI tap --target Edit --target-type button --index 0
+$CLI tap --target submitButton --target-type button
+$CLI tap -t submitButton -T button
+$CLI tap --target Edit --target-type button --index 0
 ```
 
 Options:
@@ -69,8 +69,8 @@ Scrolls content in a direction (reveals content in that direction).
 - `--direction right` = reveal content to the right (internally swipes left)
 
 ```bash
-python3 $CLI scroll --direction down   # Scroll down to see more content below
-python3 $CLI scroll -d up --target scrollView  # Scroll up to see content above
+$CLI scroll --direction down   # Scroll down to see more content below
+$CLI scroll -d up --target scrollView  # Scroll up to see content above
 ```
 
 Options:
@@ -82,8 +82,8 @@ Options:
 Types text into a text field.
 
 ```bash
-python3 $CLI type --value "test@example.com"
-python3 $CLI type -V "Hello" --target usernameField
+$CLI type --value "test@example.com"
+$CLI type -V "Hello" --target usernameField
 ```
 
 Options:
@@ -95,8 +95,8 @@ Options:
 Adjusts a slider to a normalized position (0.0 to 1.0).
 
 ```bash
-python3 $CLI adjust --target volumeSlider --value 0.75
-python3 $CLI adjust -t volumeSlider -V 0.5
+$CLI adjust --target volumeSlider --value 0.75
+$CLI adjust -t volumeSlider -V 0.5
 ```
 
 Options:
@@ -113,8 +113,8 @@ Examples:
 Pinches to zoom in or out on an element (iOS only — not available on macOS).
 
 ```bash
-python3 $CLI pinch --scale 2.0 --target imageView
-python3 $CLI pinch -s 0.5 -V 2.0
+$CLI pinch --scale 2.0 --target imageView
+$CLI pinch -s 0.5 -V 2.0
 ```
 
 Options:
@@ -127,8 +127,8 @@ Options:
 Pauses for a specified duration.
 
 ```bash
-python3 $CLI wait --value 2.0
-python3 $CLI wait  # defaults to 1.0 second
+$CLI wait --value 2.0
+$CLI wait  # defaults to 1.0 second
 ```
 
 Options:
@@ -139,7 +139,7 @@ Options:
 Captures current state without performing any action.
 
 ```bash
-python3 $CLI screenshot
+$CLI screenshot
 ```
 
 ### status
@@ -147,7 +147,7 @@ python3 $CLI screenshot
 Checks current command status without executing.
 
 ```bash
-python3 $CLI status
+$CLI status
 ```
 
 ### activate
@@ -155,7 +155,7 @@ python3 $CLI status
 Brings the app to the foreground. **Always call this after starting the test** — if the app window is behind other windows, scroll/tap actions will fail with "Unable to find hit point".
 
 ```bash
-python3 $CLI -c "$CT" activate
+$CLI -c "$CT" activate
 ```
 
 ### reset
@@ -163,7 +163,7 @@ python3 $CLI -c "$CT" activate
 Cleans protocol files for a fresh session. Use before starting a new test.
 
 ```bash
-python3 $CLI -c "$CT" reset
+$CLI -c "$CT" reset
 ```
 
 ### ready
@@ -171,8 +171,8 @@ python3 $CLI -c "$CT" reset
 Checks if XCUITest is running and ready for commands. With `--timeout`, polls until ready or timeout expires.
 
 ```bash
-python3 $CLI -c "$CT" ready                  # Instant check
-python3 $CLI -c "$CT" ready --timeout 30     # Wait up to 30 seconds
+$CLI -c "$CT" ready                  # Instant check
+$CLI -c "$CT" ready --timeout 30     # Wait up to 30 seconds
 ```
 
 Options:
@@ -183,7 +183,7 @@ Options:
 Exits the test loop.
 
 ```bash
-python3 $CLI -c "$CT" done
+$CLI -c "$CT" done
 ```
 
 ## Handling Multiple Matches

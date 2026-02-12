@@ -67,7 +67,7 @@ Menu items (e.g., `performZoom:`) exist in the hierarchy but are not hittable be
 
 The XCUITest runner is sandboxed on macOS and **cannot write to `/tmp/`**. Ensure:
 1. The test uses `InteractiveControlLoop.Configuration` with container paths
-2. The Python CLI uses `--container` flag pointing to the correct sandbox path
+2. The CLI uses `--container` flag pointing to the correct sandbox path
 3. Check the container directory exists: `ls $CONTAINER/`
 
 ### "Failed to terminate <app>"
@@ -85,13 +85,13 @@ This can happen on the first run after an Xcode restart, or when running from a 
 
 ### `done` command reports timeout
 
-This is **expected behavior**. The test exits immediately on `done` without writing a "completed" status back. The Python CLI times out waiting for a response that never comes. The test itself exits cleanly — check the xcodebuild output for "TEST EXECUTE SUCCEEDED".
+This is **expected behavior**. The test exits immediately on `done` without writing a "completed" status back. The CLI times out waiting for a response that never comes. The test itself exits cleanly — check the xcodebuild output for "TEST EXECUTE SUCCEEDED".
 
 ### "Unable to find hit point for Application"
 
 The app window is behind other windows and isn't hittable. Fix:
 ```bash
-python3 $CLI -c "$CT" activate
+$CLI -c "$CT" activate
 ```
 This brings the app to the foreground. **Always run `activate` after starting the test** before any scroll/tap commands.
 

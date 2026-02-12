@@ -28,7 +28,7 @@ Add the package to your project via SPM:
 .package(url: "https://github.com/gestrich/xcode-sim-automation.git", from: "1.0.0")
 ```
 
-### 2. Get the Python CLI
+### 2. Get the CLI
 
 Clone the xcode-sim-automation repo to get the CLI tool:
 
@@ -36,7 +36,9 @@ Clone the xcode-sim-automation repo to get the CLI tool:
 git clone https://github.com/gestrich/xcode-sim-automation.git
 ```
 
-The CLI is at `Tools/xcuitest-control.py` within the cloned repo.
+The CLI is the wrapper script at `Tools/xcuitest-control` within the cloned repo. It auto-builds the Swift CLI binary on first run and whenever source files change — no manual build step needed.
+
+A Python fallback (`Tools/xcuitest-control.py`) is also available if the Swift toolchain isn't installed.
 
 ## Workflow
 

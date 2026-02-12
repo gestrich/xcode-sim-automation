@@ -15,8 +15,8 @@ The container path depends on your UI test runner's bundle identifier. For examp
 
 Use the `--container` (`-c`) flag on every CLI command to set all file paths from this directory:
 ```bash
-python3 $CLI -c "$CT" screenshot
-python3 $CLI -c "$CT" tap --target myButton --target-type button
+$CLI -c "$CT" screenshot
+$CLI -c "$CT" tap --target myButton --target-type button
 ```
 
 The `$CONTAINER` value should come from `.xcuitest-config.json` (`containerPath` field).

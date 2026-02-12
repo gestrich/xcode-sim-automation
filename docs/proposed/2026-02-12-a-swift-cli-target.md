@@ -129,25 +129,27 @@ Package: XCUITestControl
 **Files created:**
 - `Tools/xcuitest-control`
 
-## - [ ] Phase 7: Update skill documentation
+## - [x] Phase 7: Update skill documentation
 
-**Skills to read**: `interactive-xcuitest`, `creating-automated-screenshots`
+**Completed.** All skill documentation and the README updated to use `Tools/xcuitest-control` (the Swift CLI wrapper) instead of `python3 Tools/xcuitest-control.py`.
 
-Update the skill files so the AI uses `Tools/xcuitest-control` (the wrapper script) instead of the Python CLI.
+**Technical notes:**
+- Replaced all `python3 Tools/xcuitest-control.py` / `python3 $CLI` invocations with `Tools/xcuitest-control` / `$CLI` across all skill files
+- Updated skill descriptions to remove "Python" qualifier (now just "CLI")
+- Documented auto-build behavior: the wrapper builds the Swift binary on first run and when sources change — no manual build step needed
+- `Tools/xcuitest-control.py` kept as a documented fallback in case the Swift toolchain isn't available
+- Updated the "Locating the CLI" sections to point to the wrapper script instead of the `.py` file
+- Also updated `error-handling.md`, `macos-notes.md`, and `README.md` which had `python3 $CLI` references
 
-**Tasks:**
-- Update `.claude/skills/interactive-xcuitest/SKILL.md` and `plugin/skills/interactive-xcuitest/SKILL.md`:
-  - Replace `python3 xcuitest-control.py` invocations with the wrapper script path
-  - Document that the wrapper auto-builds on first run and when sources change — no manual build step needed
-  - The Swift CLI accepts the same flags as the Python CLI
-  - Keep `xcuitest-control.py` in the repo as a fallback (e.g., if Swift toolchain isn't available)
-- Update `plugin/skills/interactive-xcuitest/cli-reference.md` with the new invocation pattern
-- Update `plugin/tools/xcuitest-control.py` reference if the plugin metadata points to it
-
-**Files to modify:**
+**Files modified:**
 - `.claude/skills/interactive-xcuitest/SKILL.md`
+- `.claude/skills/creating-automated-screenshots/SKILL.md`
 - `plugin/skills/interactive-xcuitest/SKILL.md`
 - `plugin/skills/interactive-xcuitest/cli-reference.md`
+- `plugin/skills/interactive-xcuitest/error-handling.md`
+- `plugin/skills/interactive-xcuitest/macos-notes.md`
+- `plugin/skills/creating-automated-screenshots/SKILL.md`
+- `README.md`
 
 ## - [ ] Phase 8: Validation
 

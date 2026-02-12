@@ -5,11 +5,11 @@ A Swift package that provides file-based interactive control of iOS apps through
 ## How It Works
 
 ```
-Claude (AI) → Python CLI → JSON file → XCUITest polling loop → iOS app
+Claude (AI) → CLI → JSON file → XCUITest polling loop → iOS app
 ```
 
 1. The XCUITest polling loop runs inside your app's UI test target, watching a JSON command file
-2. A Python CLI writes commands to that file and polls for results
+2. A CLI writes commands to that file and polls for results
 3. After each action, the loop writes back a UI hierarchy snapshot and screenshot
 4. The AI agent reads those artifacts, decides the next action, and repeats
 
@@ -62,14 +62,16 @@ xcodebuild test \
     -only-testing:MyAppUITests/InteractiveControlTests/testInteractiveControl
 ```
 
-Once the test is running, use the Python CLI to send commands:
+Once the test is running, use the CLI to send commands:
 
 ```bash
-python3 Tools/xcuitest-control.py screenshot
-python3 Tools/xcuitest-control.py tap --target "Login"
-python3 Tools/xcuitest-control.py type --value "user@example.com" --target "Email"
-python3 Tools/xcuitest-control.py done
+Tools/xcuitest-control screenshot
+Tools/xcuitest-control tap --target "Login"
+Tools/xcuitest-control type --value "user@example.com" --target "Email"
+Tools/xcuitest-control done
 ```
+
+The wrapper script auto-builds the Swift CLI binary on first run and whenever source files change. A Python fallback (`Tools/xcuitest-control.py`) is also available.
 
 ## Configuration
 
@@ -96,13 +98,13 @@ let config = InteractiveControlLoop.Configuration(
 InteractiveControlLoop(configuration: config).run(app: app)
 ```
 
-## Python CLI
+## CLI
 
-The CLI lives at `Tools/xcuitest-control.py`. Clone this repo to get it:
+The CLI wrapper lives at `Tools/xcuitest-control`. Clone this repo to get it:
 
 ```bash
 git clone https://github.com/gestrich/xcode-sim-automation.git
-python3 xcode-sim-automation/Tools/xcuitest-control.py --help
+xcode-sim-automation/Tools/xcuitest-control --help
 ```
 
 ### Commands

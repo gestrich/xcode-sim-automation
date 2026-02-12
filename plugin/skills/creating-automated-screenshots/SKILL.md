@@ -45,15 +45,17 @@ Add the package to your project via SPM:
 .package(url: "https://github.com/gestrich/xcode-sim-automation.git", from: "1.0.0")
 ```
 
-### 2. Get the Python CLI
+### 2. Get the CLI
 
-The Python CLI (`xcuitest-control.py`) is bundled with this plugin. To find it:
+The CLI wrapper script (`Tools/xcuitest-control`) is in the xcode-sim-automation repo. To find it:
 
-1. Search for the plugin's tools directory — it contains `xcuitest-control.py`
-2. Common locations: `~/Developer/personal/xcode-sim-automation/Tools/xcuitest-control.py` or the plugin cache at `~/.claude/plugins/cache/*/tools/xcuitest-control.py`
+1. Search for the repo's `Tools/xcuitest-control` wrapper script (not the `.py` file)
+2. Common locations: `~/Developer/personal/xcode-sim-automation/Tools/xcuitest-control`
 3. If not found, clone the repo: `git clone https://github.com/gestrich/xcode-sim-automation.git`
 
-No additional Python dependencies are required — the script uses only the standard library.
+The wrapper auto-builds the Swift CLI binary on first run and whenever source files change — no manual build step needed.
+
+A Python fallback (`Tools/xcuitest-control.py`) is also available if the Swift toolchain isn't installed.
 
 ## Workflow
 

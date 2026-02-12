@@ -1,12 +1,12 @@
 ---
 name: interactive-xcuitest
-description: Interactively controls XCUITest through a Python CLI. Claude reads UI state and screenshots, decides actions, and executes commands via the CLI. Use for dynamic UI exploration, complex navigation flows, or when pre-scripted navigation isn't feasible.
+description: Interactively controls XCUITest through a CLI. Claude reads UI state and screenshots, decides actions, and executes commands via the CLI. Use for dynamic UI exploration, complex navigation flows, or when pre-scripted navigation isn't feasible.
 user-invocable: true
 ---
 
 # Interactive XCUITest Control
 
-Enables Claude to dynamically control an iOS app through XCUITest using a Python CLI that abstracts the file-based protocol. Unlike pre-scripted tests, this allows Claude to explore the UI, make decisions based on current state, and recover from unexpected situations.
+Enables Claude to dynamically control an iOS app through XCUITest using a CLI that abstracts the file-based protocol. Unlike pre-scripted tests, this allows Claude to explore the UI, make decisions based on current state, and recover from unexpected situations.
 
 ## Usage
 
@@ -48,7 +48,7 @@ final class InteractiveControlTests: XCTestCase {
 }
 ```
 
-### 3. Get the Python CLI
+### 3. Get the CLI
 
 Clone the xcode-sim-automation repo to get the CLI tool:
 
@@ -56,39 +56,41 @@ Clone the xcode-sim-automation repo to get the CLI tool:
 git clone https://github.com/gestrich/xcode-sim-automation.git
 ```
 
-The CLI is at `Tools/xcuitest-control.py` within the cloned repo.
+The CLI is the wrapper script at `Tools/xcuitest-control` within the cloned repo. It auto-builds the Swift CLI binary on first run and whenever source files change — no manual build step needed.
 
-## Python CLI
+A Python fallback (`Tools/xcuitest-control.py`) is also available if the Swift toolchain isn't installed.
 
-The `xcuitest-control.py` script provides a simple interface for controlling XCUITest:
+## CLI
+
+The `Tools/xcuitest-control` script provides a simple interface for controlling XCUITest. It accepts the same flags as the Python CLI:
 
 ```bash
 # Tap a button
-python3 Tools/xcuitest-control.py tap --target submitButton --target-type button
+Tools/xcuitest-control tap --target submitButton --target-type button
 
 # Scroll down
-python3 Tools/xcuitest-control.py scroll --direction down
+Tools/xcuitest-control scroll --direction down
 
 # Type text
-python3 Tools/xcuitest-control.py type --value "Hello World"
+Tools/xcuitest-control type --value "Hello World"
 
 # Adjust a slider to 75%
-python3 Tools/xcuitest-control.py adjust --target volumeSlider --value 0.75
+Tools/xcuitest-control adjust --target volumeSlider --value 0.75
 
 # Pinch to zoom in (scale > 1.0)
-python3 Tools/xcuitest-control.py pinch --scale 2.0 --target imageView
+Tools/xcuitest-control pinch --scale 2.0 --target imageView
 
 # Wait 2 seconds
-python3 Tools/xcuitest-control.py wait --value 2.0
+Tools/xcuitest-control wait --value 2.0
 
 # Take screenshot
-python3 Tools/xcuitest-control.py screenshot
+Tools/xcuitest-control screenshot
 
 # Check status
-python3 Tools/xcuitest-control.py status
+Tools/xcuitest-control status
 
 # Exit the test
-python3 Tools/xcuitest-control.py done
+Tools/xcuitest-control done
 ```
 
 ### CLI Output
@@ -144,7 +146,7 @@ while [ ! -f /tmp/xcuitest-hierarchy.txt ]; do sleep 1; done
 
 Or use the status command:
 ```bash
-python3 Tools/xcuitest-control.py status
+Tools/xcuitest-control status
 ```
 
 ### 3. Execute Commands
@@ -159,7 +161,7 @@ cat /tmp/xcuitest-hierarchy.txt
 # Read file: /tmp/xcuitest-screenshot.png
 
 # Execute action
-python3 Tools/xcuitest-control.py tap --target settingsButton --target-type button
+Tools/xcuitest-control tap --target settingsButton --target-type button
 
 # View updated screenshot after action
 # Read file: /tmp/xcuitest-screenshot.png
@@ -170,7 +172,7 @@ python3 Tools/xcuitest-control.py tap --target settingsButton --target-type butt
 When the goal is achieved:
 
 ```bash
-python3 Tools/xcuitest-control.py done
+Tools/xcuitest-control done
 ```
 
 ## CLI Commands Reference
@@ -179,9 +181,9 @@ python3 Tools/xcuitest-control.py done
 Taps an element by identifier.
 
 ```bash
-python3 Tools/xcuitest-control.py tap --target submitButton --target-type button
-python3 Tools/xcuitest-control.py tap -t submitButton -T button
-python3 Tools/xcuitest-control.py tap --target Edit --target-type button --index 0
+Tools/xcuitest-control tap --target submitButton --target-type button
+Tools/xcuitest-control tap -t submitButton -T button
+Tools/xcuitest-control tap --target Edit --target-type button --index 0
 ```
 
 Options:
@@ -199,8 +201,8 @@ Scrolls content in a direction (reveals content in that direction).
 - `--direction right` = reveal content to the right (internally swipes left)
 
 ```bash
-python3 Tools/xcuitest-control.py scroll --direction down   # Scroll down to see more content below
-python3 Tools/xcuitest-control.py scroll -d up --target scrollView  # Scroll up to see content above
+Tools/xcuitest-control scroll --direction down   # Scroll down to see more content below
+Tools/xcuitest-control scroll -d up --target scrollView  # Scroll up to see content above
 ```
 
 Options:
@@ -211,8 +213,8 @@ Options:
 Types text into a text field.
 
 ```bash
-python3 Tools/xcuitest-control.py type --value "test@example.com"
-python3 Tools/xcuitest-control.py type -V "Hello" --target usernameField
+Tools/xcuitest-control type --value "test@example.com"
+Tools/xcuitest-control type -V "Hello" --target usernameField
 ```
 
 Options:
@@ -223,8 +225,8 @@ Options:
 Adjusts a slider to a normalized position (0.0 to 1.0).
 
 ```bash
-python3 Tools/xcuitest-control.py adjust --target volumeSlider --value 0.75
-python3 Tools/xcuitest-control.py adjust -t volumeSlider -V 0.5
+Tools/xcuitest-control adjust --target volumeSlider --value 0.75
+Tools/xcuitest-control adjust -t volumeSlider -V 0.5
 ```
 
 Options:
@@ -240,8 +242,8 @@ Examples:
 Pinches to zoom in or out on an element.
 
 ```bash
-python3 Tools/xcuitest-control.py pinch --scale 2.0 --target imageView
-python3 Tools/xcuitest-control.py pinch -s 0.5 -V 2.0
+Tools/xcuitest-control pinch --scale 2.0 --target imageView
+Tools/xcuitest-control pinch -s 0.5 -V 2.0
 ```
 
 Options:
@@ -260,8 +262,8 @@ Examples:
 Pauses for a specified duration.
 
 ```bash
-python3 Tools/xcuitest-control.py wait --value 2.0
-python3 Tools/xcuitest-control.py wait  # defaults to 1.0 second
+Tools/xcuitest-control wait --value 2.0
+Tools/xcuitest-control wait  # defaults to 1.0 second
 ```
 
 Options:
@@ -271,21 +273,21 @@ Options:
 Captures current state without performing any action.
 
 ```bash
-python3 Tools/xcuitest-control.py screenshot
+Tools/xcuitest-control screenshot
 ```
 
 ### status
 Checks current command status without executing.
 
 ```bash
-python3 Tools/xcuitest-control.py status
+Tools/xcuitest-control status
 ```
 
 ### done
 Exits the test loop.
 
 ```bash
-python3 Tools/xcuitest-control.py done
+Tools/xcuitest-control done
 ```
 
 ## Handling Multiple Matches
@@ -350,7 +352,7 @@ When interacting with text fields, the keyboard will appear and may block other 
 Tap on a non-interactive element that's visible above the keyboard:
 
 ```bash
-python3 Tools/xcuitest-control.py tap --target notesLabel --target-type staticText
+Tools/xcuitest-control tap --target notesLabel --target-type staticText
 ```
 
 **Tips for dismissing the keyboard:**
@@ -363,12 +365,12 @@ python3 Tools/xcuitest-control.py tap --target notesLabel --target-type staticTe
 
 1. **Tap the text field first** to focus it:
    ```bash
-   python3 Tools/xcuitest-control.py tap --target searchBar --target-type any
+   Tools/xcuitest-control tap --target searchBar --target-type any
    ```
 
 2. **Then type your text**:
    ```bash
-   python3 Tools/xcuitest-control.py type --value "Hello"
+   Tools/xcuitest-control type --value "Hello"
    ```
 
 ### Common Keyboard Issues
@@ -467,13 +469,13 @@ cat /tmp/xcuitest-hierarchy.txt
 # Use the Read tool on /tmp/xcuitest-screenshot.png
 
 # 5. Tap an element based on what you see
-python3 Tools/xcuitest-control.py tap --target someButton --target-type button
+Tools/xcuitest-control tap --target someButton --target-type button
 
 # 6. Read updated hierarchy and screenshot
 cat /tmp/xcuitest-hierarchy.txt
 
 # 7. Exit when done
-python3 Tools/xcuitest-control.py done
+Tools/xcuitest-control done
 ```
 
 ## Environment Variable Overrides
