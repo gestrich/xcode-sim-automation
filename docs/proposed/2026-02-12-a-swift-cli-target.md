@@ -103,15 +103,17 @@ Package: XCUITestControl
 - `Sources/xcuitest-control/Commands/ResetCommand.swift`
 - `Sources/xcuitest-control/Commands/ReadyCommand.swift`
 
-## - [ ] Phase 5: Build and manual smoke test
+## - [x] Phase 5: Build and manual smoke test
 
-**Tasks:**
-- Build the CLI: `swift build`
-- Run `.build/debug/xcuitest-control --help` and verify the help output lists all subcommands
-- Run `.build/debug/xcuitest-control reset` and verify it cleans protocol files
-- Run `.build/debug/xcuitest-control status` and verify JSON output
-- Run `.build/debug/xcuitest-control tap --target test -t /tmp` and verify it writes a pending command to `/tmp/xcuitest-command.json` (it will time out since no harness is running — that's expected; verify the JSON was written correctly before timeout)
-- Compare JSON output format side-by-side with `python3 Tools/xcuitest-control.py` for at least one command to confirm compatibility
+**Completed.** All smoke tests passed. The Swift CLI builds cleanly and produces JSON output identical to the Python CLI.
+
+**Technical notes:**
+- `swift build` completes with no errors (all three targets: models, library, CLI)
+- `--help` lists all 13 subcommands with correct descriptions
+- `reset` produces JSON with `status`, `removed`, and `message` keys — exact match with Python output
+- `status` produces JSON with `command`, `hierarchy`, `screenshot`, `hierarchy_exists`, `screenshot_exists` keys — exact match with Python output
+- `tap --target "test_button" -c /tmp` writes a valid `{"action":"tap","status":"pending","target":"test_button"}` command file, then times out as expected (no harness running), returning error JSON with exit code 1
+- Side-by-side JSON comparison (sorted keys) of `reset`, `status`, and `tap` command files between Python and Swift CLIs: all match exactly
 
 ## - [ ] Phase 6: Create wrapper script with auto-build
 
