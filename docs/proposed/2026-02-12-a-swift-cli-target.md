@@ -151,14 +151,16 @@ Package: XCUITestControl
 - `plugin/skills/creating-automated-screenshots/SKILL.md`
 - `README.md`
 
-## - [ ] Phase 8: Validation
+## - [x] Phase 8: Validation
 
-**Tasks:**
-- `swift build -c release` succeeds with no errors for all three targets (models, library, CLI)
-- Running `Tools/xcuitest-control --help` triggers a build (first time) and shows all subcommands with correct flags
-- Running `Tools/xcuitest-control --help` again does NOT rebuild (binary is up-to-date)
-- Touch a source file, run again — confirm it rebuilds
-- `reset` and `status` subcommands produce valid JSON matching Python format
-- `ready` with `--timeout 0` returns immediately with correct JSON
-- Verify the `XCUITestControlModels` library can be imported independently (no XCTest dependency leaks)
-- Run `python3 Tools/xcuitest-control.py reset` and `Tools/xcuitest-control status` to confirm the Swift CLI can read files written by the Python CLI (and vice versa) — confirming JSON format compatibility
+**Completed.** All validation checks passed. The Swift CLI is fully functional and cross-compatible with the Python CLI.
+
+**Validation results:**
+- `swift build -c release` succeeds with no errors for all three targets (pre-existing XCTest actor-isolation warnings in `XCUITestControl` only)
+- `Tools/xcuitest-control --help` triggers build on first run, shows all 13 subcommands
+- Second `--help` run produces no "Building..." message — binary cached correctly
+- Touching a source file triggers rebuild on next invocation
+- `reset` returns `{"message", "removed", "status"}` keys; `status` returns `{"command", "hierarchy", "hierarchy_exists", "screenshot", "screenshot_exists"}` — both valid JSON matching Python format
+- `ready --timeout 0` returns immediately (exit code 1) with `{"command_status", "hierarchy", "hierarchy_age_seconds", "hierarchy_exists", "ready", "screenshot"}` keys
+- `XCUITestControlModels` builds independently (`swift build --target XCUITestControlModels`) with zero XCTest imports or linker settings
+- Cross-compatibility confirmed: Python `tap --target "cross_test_btn"` writes `xcuitest-command.json` that Swift `status` reads correctly, and Swift `tap --target "swift_btn"` writes a command file that Python `status` reads correctly — JSON format is fully interchangeable
