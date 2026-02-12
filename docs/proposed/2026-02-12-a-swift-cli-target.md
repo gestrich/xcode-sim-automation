@@ -75,30 +75,20 @@ Package: XCUITestControl
 - `Sources/xcuitest-control/CommandIO.swift`
 - `Sources/xcuitest-control/ResultOutput.swift`
 
-## - [ ] Phase 4: Implement action subcommands
+## - [x] Phase 4: Implement action subcommands
 
-Implement each subcommand to match the Python CLI's interface exactly.
+**Completed.** All 13 subcommands fully implemented with options matching the Python CLI's interface exactly.
 
-**Tasks:**
-- Implement these subcommands (each as a `ParsableCommand`):
-  - `tap` — `--target` (required), `--target-type`, `--index`
-  - `right-click` — `--target` (required), `--target-type`, `--index`
-  - `scroll` — `--direction` (required), `--target`, `--target-type`
-  - `type` — `--value` (required), `--target`, `--target-type`
-  - `adjust` — `--target` (required), `--value` (required)
-  - `pinch` — `--scale` (required), `--velocity`, `--target`, `--target-type`
-  - `wait` — `--value` (optional, default "1.0")
-  - `screenshot` — no args
-  - `activate` — no args
-  - `done` — no args
-  - `status` — check without executing
-  - `reset` — delete protocol files
-  - `ready` — `--timeout` (optional, default "0")
-- Each subcommand creates an `InteractiveCommand` using the shared Swift model, writes it via `CommandIO`, polls for completion, and outputs the result
-- Flag names and short flags must match the Python CLI exactly (`-t`, `-T`, `-V`, `-d`, `-s`, `-i`, `-c`)
-- The `status`, `reset`, and `ready` commands are local-only (don't write a pending command)
+**Technical notes:**
+- Each subcommand extracted to its own file under `Sources/xcuitest-control/Commands/`
+- Action subcommands (tap, right-click, scroll, type, adjust, pinch, wait, screenshot, activate, done) follow the write-command → poll → output pattern via `CommandIO` and `ResultOutput`
+- Local-only subcommands (status, reset, ready) have custom implementations matching Python's JSON output format
+- `InteractiveTargetType` and `InteractiveScrollDirection` extended with `ExpressibleByArgument` conformance in the CLI target for use as `@Option` types
+- Short flags match Python exactly: `-t` (target), `-T` (target-type), `-V` (value/velocity), `-d` (direction), `-s` (scale), `-i` (index)
+- `ready` uses `-t` for `--timeout` (no conflict since it doesn't take a target)
+- Stubbed subcommands removed from `XCUITestControlCLI.swift` — only `GlobalOptions`, the `@main` entry point, and `ExpressibleByArgument` extensions remain
 
-**Files to create:**
+**Files created:**
 - `Sources/xcuitest-control/Commands/TapCommand.swift`
 - `Sources/xcuitest-control/Commands/RightClickCommand.swift`
 - `Sources/xcuitest-control/Commands/ScrollCommand.swift`
@@ -112,8 +102,6 @@ Implement each subcommand to match the Python CLI's interface exactly.
 - `Sources/xcuitest-control/Commands/StatusCommand.swift`
 - `Sources/xcuitest-control/Commands/ResetCommand.swift`
 - `Sources/xcuitest-control/Commands/ReadyCommand.swift`
-
-**Important:** Every subcommand should produce JSON output identical to what the Python CLI produces, so the AI skills work without changes.
 
 ## - [ ] Phase 5: Build and manual smoke test
 
