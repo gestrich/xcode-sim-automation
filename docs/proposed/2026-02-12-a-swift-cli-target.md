@@ -48,21 +48,15 @@ Package: XCUITestControl
 - Added `Sendable` conformance to all model types since this is a Swift 6 package (`swift-tools-version: 6.0`)
 - The `XCUITestControl` target produces pre-existing XCTest actor-isolation warnings (unrelated to this change) but compiles without errors
 
-## - [ ] Phase 2: Add Swift Argument Parser dependency and CLI target
+## - [x] Phase 2: Add Swift Argument Parser dependency and CLI target
 
-Add the `swift-argument-parser` package dependency and create the executable target skeleton.
+**Completed.** Added `swift-argument-parser` (1.3.0+) dependency and `xcuitest-control` executable target with all 13 subcommands stubbed.
 
-**Tasks:**
-- Add `apple/swift-argument-parser` dependency to `Package.swift` (use a recent version, e.g., `1.3.0`+)
-- Add `xcuitest-control` executable target depending on `XCUITestControlModels` and `ArgumentParser`
-- Create `Sources/xcuitest-control/` directory with an entry point file
-- Create a root `XCUITestControl` command using `@main` and `ParsableCommand` with subcommands stubbed
-
-**Files to create:**
-- `Sources/xcuitest-control/XCUITestControlCLI.swift` — root command with subcommand routing
-
-**Files to modify:**
-- `Package.swift`
+**Technical notes:**
+- Used `.executableTarget` with `@main` entry point on `XCUITestControlCLI`
+- All subcommands (tap, right-click, scroll, type, adjust, pinch, wait, screenshot, activate, done, status, reset, ready) are registered with placeholder implementations
+- The executable product is also exported from the package for discoverability
+- All three targets (XCUITestControlModels, XCUITestControl, xcuitest-control) build successfully
 
 ## - [ ] Phase 3: Implement shared CLI infrastructure
 

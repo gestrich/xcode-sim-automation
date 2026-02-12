@@ -7,6 +7,10 @@ let package = Package(
     products: [
         .library(name: "XCUITestControl", targets: ["XCUITestControl"]),
         .library(name: "XCUITestControlModels", targets: ["XCUITestControlModels"]),
+        .executable(name: "xcuitest-control", targets: ["xcuitest-control"]),
+    ],
+    dependencies: [
+        .package(url: "https://github.com/apple/swift-argument-parser.git", from: "1.3.0"),
     ],
     targets: [
         .target(
@@ -18,6 +22,14 @@ let package = Package(
             dependencies: ["XCUITestControlModels"],
             path: "Sources/XCUITestControl",
             linkerSettings: [.linkedFramework("XCTest")]
+        ),
+        .executableTarget(
+            name: "xcuitest-control",
+            dependencies: [
+                "XCUITestControlModels",
+                .product(name: "ArgumentParser", package: "swift-argument-parser"),
+            ],
+            path: "Sources/xcuitest-control"
         ),
     ]
 )
