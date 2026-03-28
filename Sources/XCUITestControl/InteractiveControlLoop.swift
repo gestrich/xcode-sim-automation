@@ -44,14 +44,20 @@ public struct InteractiveControlLoop {
     public func run(app: XCUIApplication) {
         let executor = InteractiveActionExecutor(configuration: configuration)
 
+        // Clear stale commands from previous sessions to prevent
+        // the loop from immediately exiting on a leftover "done" command
+        try? FileManager.default.removeItem(atPath: configuration.commandPath)
+
         writeHierarchy(app: app)
         writeScreenshot(app: app)
         writeInitialCommand()
 
         var lastPendingCommandTime = Date()
+        print("Interactive control: Loop starting. Session timeout: \(Int(configuration.sessionTimeout))s. Command path: \(configuration.commandPath)")
 
         while true {
             guard let command = readCommand() else {
+                print("Interactive control: No command file found, polling...")
                 Thread.sleep(forTimeInterval: configuration.pollingInterval)
                 if Date().timeIntervalSince(lastPendingCommandTime) > configuration.sessionTimeout {
                     print("Interactive control: Timeout - no commands received for \(Int(configuration.sessionTimeout)) seconds. Exiting.")
@@ -60,7 +66,12 @@ public struct InteractiveControlLoop {
                 continue
             }
 
-            if command.action == .done { break }
+            print("Interactive control: Read command - action=\(command.action.rawValue) status=\(command.status.rawValue)")
+
+            if command.action == .done {
+                print("Interactive control: Received done command. Exiting.")
+                break
+            }
             if command.status != .pending {
                 Thread.sleep(forTimeInterval: configuration.pollingInterval)
                 if Date().timeIntervalSince(lastPendingCommandTime) > configuration.sessionTimeout {
